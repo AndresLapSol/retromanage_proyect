@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Rectangle2D?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane fx:id="labelGeneral" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="401.0" prefWidth="677.0" style="-fx-background-color: bad1d9;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.lapuente_andres_t8_di.MainController">
+   <children>
+      <ImageView fx:id="imagePrincipal" fitHeight="380.0" fitWidth="394.0" layoutY="22.0" pickOnBounds="true">
+         <image>
+            <Image url="@../../../th.jpeg" />
+         </image>
+         <viewport>
+            <Rectangle2D />
+         </viewport>
+      </ImageView>
+      <MenuBar prefHeight="25.0" prefWidth="677.0">
+        <menus>
+          <Menu>
+            <graphic>
+                <Label fx:id="menuComensales" onMouseClicked="#abrirCliente" text="Comensales" />
+            </graphic>
+          </Menu>
+          <Menu>
+              <graphic>
+                  <Label fx:id="menuPlatos" onMouseClicked="#abrirProducto" text="Platos" />
+              </graphic>
+          </Menu>
+          <Menu>
+              <graphic>
+                  <Label fx:id="menuPedidos" onMouseClicked="#abrirPedido" text="Pedidos" />
+              </graphic>
+          </Menu>
+        </menus>
+      </MenuBar>
+      <Label fx:id="labelSeleccion" alignment="CENTER" layoutX="415.0" layoutY="47.0" prefHeight="62.0" prefWidth="242.0" text="Selecciona una tabla con la que interactuar:" textAlignment="CENTER" wrapText="true">
+         <font>
+            <Font name="MV Boli" size="14.0" />
+         </font></Label>
+      <Button fx:id="buttonComensales" layoutX="496.0" layoutY="129.0" mnemonicParsing="false" onAction="#abrirCliente" text="Comensales" />
+      <Button fx:id="buttonPlatos" layoutX="512.0" layoutY="190.0" mnemonicParsing="false" onAction="#abrirProducto" text="Platos" />
+      <Button fx:id="buttonPedidos" layoutX="508.0" layoutY="248.0" mnemonicParsing="false" onAction="#abrirPedido"  text="Pedidos" />
+      <Label fx:id="labelTitulo" alignment="CENTER" layoutX="14.0" layoutY="38.0" prefHeight="40.0" prefWidth="165.0" style="-fx-background-color: white; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: gray; -fx-border-width: 1; -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.5), 10, 0.2, 2, 2);" text="RestroManage " textAlignment="CENTER">
+         <font>
+            <Font name="Candara" size="12.0" />
+         </font>
+      </Label>
+      <Button fx:id="salirButton" layoutX="629.0" layoutY="368.0" mnemonicParsing="false" onAction="#cerrarVenta" text="Salir" />
+   </children>
+</AnchorPane>

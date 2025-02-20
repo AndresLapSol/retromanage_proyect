@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane fx:id="PaneCliente" prefHeight="401.0 " prefWidth="677.0" style="-fx-background-color: bad1d9;" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.lapuente_andres_t8_di.todoCliente.ClienteController">
+   <children>
+      <TableView fx:id="tablaCliente" layoutX="90.0" layoutY="116.0" prefHeight="200.0" prefWidth="498.0">
+        <columns>
+          <TableColumn fx:id="clmnId" prefWidth="55.0" text="id" />
+          <TableColumn fx:id="clmnNombre" prefWidth="140.0" text="nombre" />
+            <TableColumn fx:id="clmnTelefono" prefWidth="124.0" text="telefono" />
+            <TableColumn fx:id="clmnDireccion" prefWidth="178.0" text="direccion" />
+        </columns>
+      </TableView>
+      <TextField fx:id="textFieldNombre" layoutX="74.0" layoutY="46.0" prefHeight="25.0" prefWidth="137.0" />
+      <Label fx:id="labelNombre" layoutX="21.0" layoutY="50.0" text="Nombre:" underline="true" />
+      <TextField fx:id="textFieldTelefono" layoutX="280.0" layoutY="46.0" />
+      <Label fx:id="labelTelefono" layoutX="227.0" layoutY="50.0" text="Telefono:" underline="true" />
+      <TextField fx:id="textFieldDireccion" layoutX="505.0" layoutY="46.0" />
+      <Label fx:id="labelDireccion" layoutX="452.0" layoutY="50.0" text="Direccion:" underline="true" />
+      <Button fx:id="buttonCrear" layoutX="177.0" layoutY="337.0" mnemonicParsing="false" onAction="#insertarCliente" text="Crear" />
+      <Button fx:id="buttonModificar" layoutX="310.0" layoutY="337.0" mnemonicParsing="false" onAction="#actualizarCliente" text="Modificar" />
+      <Button fx:id="buttonEliminar" layoutX="453.0" layoutY="337.0" mnemonicParsing="false" onAction="#eliminarCliente" text="Elimar" />
+      <MenuBar prefHeight="25.0" prefWidth="679.0">
+        <menus>
+            <Menu>
+                <graphic>
+                    <Label fx:id="volverMenu" text="Volver" onMouseClicked="#cerrarVenta"/>
+                </graphic>
+            </Menu>
+        </menus>
+      </MenuBar>
+   </children>
+</AnchorPane>

@@ -3,10 +3,9 @@ package org.example.lapuente_andres_t8_di.todoProducto;
 import javafx.collections.ObservableList;
 import org.example.lapuente_andres_t8_di.todoCliente.Cliente;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Producto {
     private int id;
@@ -25,6 +24,11 @@ public class Producto {
         this.categoria = categoria;
         this.precio = precio;
         this.disponibilidad = disponibilidad;
+    }
+
+    public Producto(int id, String nombre) {
+        this.id = id;
+        this.nombre = nombre;
     }
 
     // Getters y Setters
@@ -101,5 +105,28 @@ public class Producto {
             lista.add(new Producto(resultado.getInt("id"), resultado.getString("nombre"),
                     resultado.getString("categoria"), resultado.getDouble("precio"),resultado.getBoolean("disponibilidad")));
         }
+    }
+
+    public static List<Producto> obtenerProductos(Connection connection) throws SQLException {
+        List<Producto> productos = new ArrayList<>();
+        String query = "SELECT * FROM productos"; // Ajusta el nombre de la tabla
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                String nombre = rs.getString("nombre");
+
+                // Verificar que no sean null antes de agregar a la lista
+                if (id != 0 && nombre != null && !nombre.trim().isEmpty()) {
+                    System.out.println("Producto encontrado: id=" + id + ", nombre=" + nombre);
+                    productos.add(new Producto(id, nombre));
+                } else {
+                    System.out.println("Producto con id=" + id + " tiene datos incompletos (nombre: " + nombre + ")");
+                }
+            }
+        }
+        return productos;
     }
 }

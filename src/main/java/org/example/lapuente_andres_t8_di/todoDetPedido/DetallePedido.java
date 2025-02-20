@@ -1,5 +1,13 @@
 package org.example.lapuente_andres_t8_di.todoDetPedido;
 
+import javafx.collections.ObservableList;
+import org.example.lapuente_andres_t8_di.todoPedido.Pedido;
+
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
 public class DetallePedido {
     private int idDetallePedido;
     private int idPedido;
@@ -65,5 +73,14 @@ public class DetallePedido {
 
     public void setSubtotal(double subtotal) {
         this.subtotal = subtotal;
+    }
+
+    public static void llenarInformacionDetPedido(Connection connection, ObservableList<DetallePedido> lista) throws SQLException {
+        Statement instruccion = connection.createStatement();
+        ResultSet resultado = instruccion.executeQuery("SELECT * FROM detalle_pedidos");
+        while (resultado.next()) {
+            lista.add(new DetallePedido(resultado.getInt("id_detalle_pedido"), resultado.getInt("id_pedido"), resultado.getInt("id_producto"),
+                    resultado.getInt("cantidad"),resultado.getDouble("precio"),resultado.getDouble("subtotal")));
+        }
     }
 }

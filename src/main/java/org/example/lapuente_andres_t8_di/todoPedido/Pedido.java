@@ -2,29 +2,32 @@ package org.example.lapuente_andres_t8_di.todoPedido;
 
 import javafx.collections.ObservableList;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class Pedido {
     private int idPedido;
     private int idCliente;
     private Date fechaPedido;
-    private Date horaPedido;
+    private Time horaPedido;
     private double total;
     private String estadoPedido;
 
     // Constructor
-    public Pedido(int idPedido, int idCliente, Date fechaPedido, Date horaPedido, double total, String estadoPedido) {
+    public Pedido(int idPedido, int idCliente, Date fechaPedido, Time horaPedido, double total, String estadoPedido) {
         this.idPedido = idPedido;
         this.idCliente = idCliente;
         this.fechaPedido = fechaPedido;
         this.horaPedido = horaPedido;
         this.total = total;
         this.estadoPedido = estadoPedido;
+    }
+
+    public Pedido(int idPedido) {
+        this.idPedido = idPedido;
     }
 
     // Getters y Setters
@@ -54,12 +57,12 @@ public class Pedido {
         this.fechaPedido = fechaPedido;
     }
 
-    public Date getHoraPedido() {
+    public Time getHoraPedido() {
         return horaPedido;
     }
 
     public void setHoraPedido(Date horaPedido) {
-        this.horaPedido = horaPedido;
+        this.horaPedido = (Time) horaPedido;
     }
 
     public double getTotal() {
@@ -89,6 +92,28 @@ public class Pedido {
             lista.add(new Pedido(resultado.getInt("id_pedido"), resultado.getInt("id_cliente"), resultado.getDate("fecha_pedido"),
                     resultado.getTime("hora_pedido"),resultado.getDouble("total"),resultado.getString("estado_pedido")));
         }
+    }
+
+    public static List<Pedido> obtenerPedidos(Connection connection) throws SQLException {
+        List<Pedido> pedidos = new ArrayList<>();
+        String query = "SELECT id_pedido FROM pedidos"; // Ajusta el nombre de la tabla
+
+        try (PreparedStatement stmt = connection.prepareStatement(query);
+             ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id_pedido = rs.getInt("id_pedido");
+
+                // Verificar que no sean null antes de agregar a la lista
+                if (id_pedido != 0) {
+                    System.out.println("Cliente encontrado: id=" + id_pedido );
+                    pedidos.add(new Pedido(id_pedido));
+                } else {
+                    System.out.println("Cliente con id=" + id_pedido );
+                }
+            }
+        }
+        return pedidos;
     }
 
     public int getId() {

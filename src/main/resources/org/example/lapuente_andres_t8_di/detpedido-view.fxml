@@ -22,8 +22,8 @@
             <TableColumn fx:id="clmnSubtotal" prefWidth="109.0" text="subtotal" />
         </columns>
       </TableView>
-      <Button fx:id="buttonEliminar" layoutX="571.0" layoutY="208.0" mnemonicParsing="false" text="Insertar" />
-      <Button fx:id="buttonEliminar" layoutX="575.0" layoutY="247.0" mnemonicParsing="false" text="Elimar" />
+      <Button fx:id="buttonInsertar" onAction="#insertarDetalles" layoutX="571.0" layoutY="208.0" mnemonicParsing="false" text="Insertar" />
+      <Button layoutX="575.0" layoutY="247.0" mnemonicParsing="false" text="Elimar" />
       <MenuBar prefHeight="25.0" prefWidth="679.0">
         <menus>
             <Menu>

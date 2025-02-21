@@ -31,6 +31,12 @@ public class Producto {
         this.nombre = nombre;
     }
 
+    public Producto(int id, String nombre, double precio) {
+        this.id = id;
+        this.nombre = nombre;
+        this.precio = precio;
+    }
+
     // Getters y Setters
     public int getId() {
         return id;
@@ -109,7 +115,7 @@ public class Producto {
 
     public static List<Producto> obtenerProductos(Connection connection) throws SQLException {
         List<Producto> productos = new ArrayList<>();
-        String query = "SELECT * FROM productos"; // Ajusta el nombre de la tabla
+        String query = "SELECT id, nombre, precio FROM productos"; // Ajusta el nombre de la tabla si es necesario
 
         try (PreparedStatement stmt = connection.prepareStatement(query);
              ResultSet rs = stmt.executeQuery()) {
@@ -117,11 +123,12 @@ public class Producto {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String nombre = rs.getString("nombre");
+                double precio = rs.getDouble("precio"); // Recupera el precio
 
                 // Verificar que no sean null antes de agregar a la lista
                 if (id != 0 && nombre != null && !nombre.trim().isEmpty()) {
-                    System.out.println("Producto encontrado: id=" + id + ", nombre=" + nombre);
-                    productos.add(new Producto(id, nombre));
+                    System.out.println("Producto encontrado: id=" + id + ", nombre=" + nombre + ", precio=" + precio);
+                    productos.add(new Producto(id, nombre, precio)); // Asignar el precio al producto
                 } else {
                     System.out.println("Producto con id=" + id + " tiene datos incompletos (nombre: " + nombre + ")");
                 }

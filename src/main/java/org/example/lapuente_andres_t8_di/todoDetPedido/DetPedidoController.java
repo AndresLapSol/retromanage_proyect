@@ -11,10 +11,7 @@ import org.example.lapuente_andres_t8_di.todoCliente.Cliente;
 import org.example.lapuente_andres_t8_di.todoPedido.Pedido;
 import org.example.lapuente_andres_t8_di.todoProducto.Producto;
 
-import java.sql.Connection;
-import java.sql.Date;
-import java.sql.SQLException;
-import java.sql.Time;
+import java.sql.*;
 import java.util.List;
 
 public class DetPedidoController {
@@ -54,7 +51,7 @@ public class DetPedidoController {
 
         // Enlazar columnas con atributos
         //clmnIdPedido.setCellValueFactory(new PropertyValueFactory<Pedido, Integer>("idPedido"));
-        clmnIdDetPedido.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("idDetPedido"));
+        clmnIdDetPedido.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("idDetallePedido"));
         clmnIdPedido.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("idPedido"));
         clmnIdProducto.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("idProducto"));
         clmnCantidad.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("cantidad"));
@@ -93,4 +90,86 @@ public class DetPedidoController {
 
 
     }
+
+    private void actualizarTotalPedido(int idPedido) {
+        String sql = "UPDATE pedidos SET total = (SELECT COALESCE(SUM(subtotal), 0) FROM detalle_pedidos WHERE id_pedido = ?) WHERE id_pedido = ?";
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPedido);
+            stmt.setInt(2, idPedido);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
+    @FXML
+    public void insertarDetalles() throws SQLException {
+
+        String sql = "INSERT INTO detalle_pedidos (id_pedido, id_producto, cantidad, precio, subtotal) VALUES (?, ?, ?, ?, ?)";
+        List<Pedido> pedidos = Pedido.obtenerPedidos(conn);
+
+        if (pedidos.isEmpty()) {
+            System.out.println("No hay pedidos disponibles.");
+            return;
+        }
+
+        // Obtener el último pedido registrado
+        Pedido ultimoPedido = pedidos.get(pedidos.size() - 1);
+
+        // Obtener el producto seleccionado
+        Producto productoSeleccionado = (Producto) choiceBoxProducto.getValue();
+
+        if (productoSeleccionado == null) {
+            System.out.println("Debe seleccionar un producto.");
+            return;
+        }
+
+        int cantidad = (Integer) spinnerCantidad.getValue();
+        double precioProducto = productoSeleccionado.getPrecio();
+        double subtotalSeleccionado = cantidad * productoSeleccionado.getPrecio();
+        System.out.println("Producto: " + productoSeleccionado.getNombre());
+        System.out.println("Precio del producto: " + precioProducto);
+        System.out.println("Cantidad: " + cantidad);
+        System.out.println("Subtotal calculado: " + subtotalSeleccionado);
+
+
+
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, ultimoPedido.getIdPedido());
+            stmt.setInt(2, productoSeleccionado.getId());
+            stmt.setInt(3, cantidad);
+            stmt.setDouble(4, productoSeleccionado.getPrecio());
+            stmt.setDouble(5, subtotalSeleccionado);
+
+            int filasAfectadas = stmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("Detalle de pedido insertado correctamente.");
+
+                // Actualizar el total en la tabla `pedidos`
+                actualizarTotalPedido(ultimoPedido.getIdPedido());
+
+                // Refrescar la tabla
+                listaDetPedidos.add(new DetallePedido(
+                        0,
+                        ultimoPedido.getIdPedido(),
+                        productoSeleccionado.getId(),
+                        cantidad,
+                        productoSeleccionado.getPrecio(),
+                        subtotalSeleccionado
+                ));
+                tablaDetPedido.getItems().clear();
+                DetallePedido.llenarInformacionDetPedido(conn, listaDetPedidos);
+                tablaDetPedido.refresh();
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
 }

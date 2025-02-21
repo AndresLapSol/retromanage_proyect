@@ -153,6 +153,43 @@ public class PedidoController {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
+        // Crear un nuevo pedidos
+            String sql = "INSERT INTO pedidos (id_cliente, fecha_pedido, hora_pedido, estado_pedido) VALUES (?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
 
+                Cliente clienteSeleccionado = (Cliente) choiceBoxCliente.getValue();
+                LocalDate fechaPedido = datePickerFecha.getValue();
+                // Obtén y valida la hora
+                String horaTexto = textFieldHora.getText();
+                if (horaTexto.matches("\\d{1,2}:\\d{2}")) { // Si el usuario ingresó "HH:mm"
+                    horaTexto += ":00";                // se añade ":00" para los segundos
+                }
+                Time hora = Time.valueOf(horaTexto);
+
+                stmt.setInt(1, clienteSeleccionado.getId());
+                stmt.setDate(2, Date.valueOf(fechaPedido));
+                stmt.setTime(3, hora); // Usar el objeto Time en lugar de la cadena
+                stmt.setString (4,choiceBoxEstado.getValue().toString());
+
+                int filasAfectadas = stmt.executeUpdate();
+                if (filasAfectadas > 0) {
+                    System.out.println("Pedido insertado correctamente.");
+
+                    listaPedidos.add(new Pedido(
+                            0,
+                            clienteSeleccionado.getId(),
+                            Date.valueOf(fechaPedido),
+                            Time.valueOf(horaTexto),
+                            0,
+                            choiceBoxEstado.getValue().toString()
+                    ));
+                    tablaPedido.getItems().clear();
+                    Pedido.llenarInformacionPedido(conn, listaPedidos);
+                    tablaPedido.refresh();
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
 }

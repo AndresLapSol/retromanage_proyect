@@ -79,8 +79,12 @@ public class DetallePedido {
         Statement instruccion = connection.createStatement();
         ResultSet resultado = instruccion.executeQuery("SELECT * FROM detalle_pedidos");
         while (resultado.next()) {
-            lista.add(new DetallePedido(resultado.getInt("id_detalle_pedido"), resultado.getInt("id_pedido"), resultado.getInt("id_producto"),
-                    resultado.getInt("cantidad"),resultado.getDouble("precio"),resultado.getDouble("subtotal")));
+            lista.add(new DetallePedido(resultado.getInt("id_detalle_pedido"),
+                    resultado.getInt("id_pedido"),
+                    resultado.getInt("id_producto"),
+                    resultado.getInt("cantidad"),
+                    resultado.getDouble("precio"),
+                    resultado.getDouble("subtotal")));
         }
     }
 }

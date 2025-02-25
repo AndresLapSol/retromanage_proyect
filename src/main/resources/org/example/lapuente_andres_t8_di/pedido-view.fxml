@@ -28,7 +28,7 @@
       <TextField fx:id="textFieldHora" layoutX="48.0" layoutY="104.0" />
       <Label fx:id="labelDireccion" layoutX="17.0" layoutY="109.0" text="Hora:" underline="true" />
       <Button fx:id="buttonCrear" layoutX="573.0" layoutY="175.0" mnemonicParsing="false" onAction="#abrirDetPedido" text="Crear" />
-      <Button fx:id="buttonModificar" layoutX="562.0" layoutY="243.0" mnemonicParsing="false" text="Modificar" />
+      <Button fx:id="buttonModificar" onAction="#modificarDetPedido" layoutX="562.0" layoutY="243.0" mnemonicParsing="false" text="Modificar" />
       <Button fx:id="buttonEliminar" layoutX="571.0" layoutY="318.0" mnemonicParsing="false" text="Elimar" />
       <MenuBar prefHeight="25.0" prefWidth="679.0">
         <menus>

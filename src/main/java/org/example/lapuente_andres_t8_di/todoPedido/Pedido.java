@@ -78,7 +78,7 @@ public class Pedido {
     }
 
     public String getEstadoPedido() {
-        return estadoPedido;
+        return estadoPedido != null ? estadoPedido : "En Preparación"; // Valor por defecto
     }
 
     public void setEstadoPedido(String estadoPedido) {

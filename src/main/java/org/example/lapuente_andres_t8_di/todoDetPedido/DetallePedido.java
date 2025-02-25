@@ -1,7 +1,7 @@
 package org.example.lapuente_andres_t8_di.todoDetPedido;
 
 import javafx.collections.ObservableList;
-import org.example.lapuente_andres_t8_di.todoPedido.Pedido;
+import javafx.scene.control.SpinnerValueFactory;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -55,8 +55,9 @@ public class DetallePedido {
         return cantidad;
     }
 
-    public void setCantidad(int cantidad) {
+    public SpinnerValueFactory setCantidad() {
         this.cantidad = cantidad;
+        return null;
     }
 
     public double getPrecio() {

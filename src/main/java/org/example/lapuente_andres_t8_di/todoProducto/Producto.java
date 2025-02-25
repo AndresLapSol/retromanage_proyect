@@ -50,6 +50,10 @@ public class Producto {
         return nombre;
     }
 
+    public Producto getProducto() {
+        return this;
+    }
+
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
@@ -136,4 +140,8 @@ public class Producto {
         }
         return productos;
     }
+
+
+
+
 }

@@ -45,6 +45,7 @@ public class PedidoController {
 
     private ConexionMySQL conexion;
     private Connection conn; // Conexión a nivel de clase
+    private Pedido pedidoSeleccionado;
 
     public PedidoController() {
         instancia = this;
@@ -54,6 +55,16 @@ public class PedidoController {
     public static PedidoController getInstancia() {
         return instancia;
     }
+
+    public Pedido getPedidoSeleccionado() {
+        return pedidoSeleccionado;
+    }
+
+    public void setPedidoSeleccionado(Pedido pedido) {
+        this.pedidoSeleccionado = pedido;
+        System.out.println("Pedido seleccionado (desde PedidoController): " + pedido.getIdPedido());
+    }
+
 
     public void initialize() throws SQLException {
         // Establecer la conexión una vez
@@ -107,6 +118,8 @@ public class PedidoController {
                 Pedido pedidoSeleccionado = tablaPedido.getSelectionModel().getSelectedItem();
                 if (pedidoSeleccionado != null) {
                     int idClientePedido = pedidoSeleccionado.getIdCliente();
+                    PedidoController.getInstancia().setPedidoSeleccionado(pedidoSeleccionado);
+                    System.out.println("Pedido seleccionado: " + pedidoSeleccionado.getIdPedido());
 
                     // Buscar el Cliente con ese id en el ChoiceBox
                     for (Cliente cliente : choiceBoxCliente.getItems()) {
@@ -334,9 +347,6 @@ public class PedidoController {
             alert.showAndWait();
         }
     }
-
-
-
 
 
 }

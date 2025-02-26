@@ -3,10 +3,7 @@ package org.example.lapuente_andres_t8_di.todoDetPedido;
 import javafx.collections.ObservableList;
 import javafx.scene.control.SpinnerValueFactory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DetallePedido {
     private int idDetallePedido;
@@ -55,8 +52,8 @@ public class DetallePedido {
         return cantidad;
     }
 
-    public SpinnerValueFactory setCantidad() {
-        this.cantidad = cantidad;
+    public SpinnerValueFactory setCantidad(int cantidad) {
+        this.cantidad = this.cantidad;
         return null;
     }
 
@@ -86,6 +83,28 @@ public class DetallePedido {
                     resultado.getInt("cantidad"),
                     resultado.getDouble("precio"),
                     resultado.getDouble("subtotal")));
+        }
+    }
+
+    public static void llenarInformacionDetPedidoPorPedido(Connection conn, ObservableList<DetallePedido> lista, int idPedido) {
+        String sql = "SELECT * FROM detalle_pedidos WHERE id_pedido = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, idPedido);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    DetallePedido detalle = new DetallePedido(
+                            rs.getInt("id_detalle_pedido"),
+                            rs.getInt("id_pedido"),
+                            rs.getInt("id_producto"),
+                            rs.getInt("cantidad"),
+                            rs.getDouble("precio"),
+                            rs.getDouble("subtotal")
+                    );
+                    lista.add(detalle);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

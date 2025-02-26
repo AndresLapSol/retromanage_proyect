@@ -23,12 +23,12 @@
         </columns>
       </TableView>
       <Button fx:id="buttonInsertar" layoutX="571.0" layoutY="208.0" mnemonicParsing="false" onAction="#insertarDetalles" text="Insertar" />
-      <Button fx:id="buttonEliminar" onAction="#eliminarDetalle" layoutX="575.0" layoutY="247.0" mnemonicParsing="false" text="Elimar" />
+      <Button fx:id="buttonEliminar" layoutX="575.0" layoutY="247.0" mnemonicParsing="false" onAction="#eliminarDetalle" text="Elimar" />
       <MenuBar prefHeight="25.0" prefWidth="679.0">
         <menus>
             <Menu>
                 <graphic>
-                    <Label fx:id="volverMenu" text="Volver" />
+                    <Label fx:id="volverMenu" text="Volver" onMouseClicked="#cerrarVenta" />
                 </graphic>
             </Menu>
         </menus>
@@ -37,5 +37,6 @@
       <ChoiceBox fx:id="choiceBoxProducto" layoutX="85.0" layoutY="56.0" prefWidth="150.0" />
       <Spinner fx:id="spinnerCantidad" layoutX="86.0" layoutY="93.0" prefHeight="25.0" prefWidth="67.0" />
       <Label fx:id="labelNombre1" layoutX="27.0" layoutY="97.0" text="Cantidad:" underline="true" />
+      <Button layoutX="566.0" onAction="#updateDetalle" layoutY="283.0" mnemonicParsing="false" text="Actualizar" />
    </children>
 </AnchorPane>

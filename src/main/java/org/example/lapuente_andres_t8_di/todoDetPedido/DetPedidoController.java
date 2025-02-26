@@ -5,6 +5,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.example.lapuente_andres_t8_di.ConexionMySQL;
 import org.example.lapuente_andres_t8_di.todoCliente.Cliente;
@@ -43,15 +44,15 @@ public class DetPedidoController {
         if (conn == null) {
             System.err.println("Error: la conexión a la base de datos es NULL.");
             return;
-
         }
+
         listaDetPedidos = FXCollections.observableArrayList();
-        DetallePedido.llenarInformacionDetPedido(conn, listaDetPedidos);  // Pasamos la conexión ya establecida
+        // Inicialmente se cargan TODOS los detalles (puedes dejarlo así o incluso no cargar nada)
+        DetallePedido.llenarInformacionDetPedido(conn, listaDetPedidos);
 
         tablaDetPedido.setItems(listaDetPedidos);
 
         // Enlazar columnas con atributos
-        //clmnIdPedido.setCellValueFactory(new PropertyValueFactory<Pedido, Integer>("idPedido"));
         clmnIdDetPedido.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("idDetallePedido"));
         clmnIdPedido.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("idPedido"));
         clmnIdProducto.setCellValueFactory(new PropertyValueFactory<DetallePedido, Integer>("idProducto"));
@@ -81,7 +82,6 @@ public class DetPedidoController {
             }
         });
 
-
         // Añadir opciones a las ChoiceBox
         // Obtener los productos desde la base de datos
         List<Producto> productos = Producto.obtenerProductos(conn);
@@ -102,7 +102,6 @@ public class DetPedidoController {
                 public Producto fromString(String s) {
                     return null;
                 }
-
             });
         } else {
             System.out.println("No se encontraron productos en la base de datos.");
@@ -110,8 +109,6 @@ public class DetPedidoController {
 
         // Establecer el valor mínimo y máximo del Spinner
         spinnerCantidad.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, 10, 1));
-
-
     }
 
     public Producto conseguirProducto(Connection connection, int id) throws SQLException {
@@ -127,20 +124,17 @@ public class DetPedidoController {
                     productoEncontrado.setId(rs.getInt("id"));
                     productoEncontrado.setNombre(rs.getString("nombre"));
                     productoEncontrado.setPrecio(rs.getDouble("precio"));
-                    // Asigna otros campos si es necesario
                     System.out.println("Producto encontrado: " + productoEncontrado.getNombre());
                 } else {
                     System.out.println("ERROR: No se encontró el producto con id=" + id);
                 }
             }
         }
-
         return productoEncontrado; // Devuelve el producto encontrado (o null si no se encontró)
     }
 
     private void actualizarTotalPedido(int idPedido) {
         String sql = "UPDATE pedidos SET total = (SELECT COALESCE(SUM(subtotal), 0) FROM detalle_pedidos WHERE id_pedido = ?) WHERE id_pedido = ?";
-
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idPedido);
             stmt.setInt(2, idPedido);
@@ -150,25 +144,18 @@ public class DetPedidoController {
         }
     }
 
-
-
+    // MÉTODO INSERTAR
     @FXML
     public void insertarDetalles() throws SQLException {
-
-        String sql = "INSERT INTO detalle_pedidos (id_pedido, id_producto, cantidad, precio, subtotal) VALUES (?, ?, ?, ?, ?)";
-        List<Pedido> pedidos = Pedido.obtenerPedidos(conn);
-
-        if (pedidos.isEmpty()) {
-            System.out.println("No hay pedidos disponibles.");
+        // Obtener el pedido seleccionado desde el PedidoController
+        Pedido pedidoSeleccionado = PedidoController.getInstancia().getPedidoSeleccionado();
+        if (pedidoSeleccionado == null) {
+            System.out.println("Por favor, selecciona un pedido.");
             return;
         }
 
-        // Obtener el último pedido registrado
-        Pedido ultimoPedido = pedidos.get(pedidos.size() - 1);
-
-        // Obtener el producto seleccionado
+        String sql = "INSERT INTO detalle_pedidos (id_pedido, id_producto, cantidad, precio, subtotal) VALUES (?, ?, ?, ?, ?)";
         Producto productoSeleccionado = (Producto) choiceBoxProducto.getValue();
-
         if (productoSeleccionado == null) {
             System.out.println("Debe seleccionar un producto.");
             return;
@@ -176,21 +163,18 @@ public class DetPedidoController {
 
         int cantidad = (Integer) spinnerCantidad.getValue();
         double precioProducto = productoSeleccionado.getPrecio();
-        double subtotalSeleccionado = cantidad * productoSeleccionado.getPrecio();
+        double subtotalSeleccionado = cantidad * precioProducto;
+
         System.out.println("Producto: " + productoSeleccionado.getNombre());
         System.out.println("Precio del producto: " + precioProducto);
         System.out.println("Cantidad: " + cantidad);
         System.out.println("Subtotal calculado: " + subtotalSeleccionado);
 
-
-
-
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
-            stmt.setInt(1, ultimoPedido.getIdPedido());
+            stmt.setInt(1, pedidoSeleccionado.getIdPedido());
             stmt.setInt(2, productoSeleccionado.getId());
             stmt.setInt(3, cantidad);
-            stmt.setDouble(4, productoSeleccionado.getPrecio());
+            stmt.setDouble(4, precioProducto);
             stmt.setDouble(5, subtotalSeleccionado);
 
             int filasAfectadas = stmt.executeUpdate();
@@ -198,28 +182,22 @@ public class DetPedidoController {
                 System.out.println("Detalle de pedido insertado correctamente.");
 
                 // Actualizar el total en la tabla `pedidos`
-                actualizarTotalPedido(ultimoPedido.getIdPedido());
+                actualizarTotalPedido(pedidoSeleccionado.getIdPedido());
 
-                // Refrescar la tabla
-                listaDetPedidos.add(new DetallePedido(
-                        0,
-                        ultimoPedido.getIdPedido(),
-                        productoSeleccionado.getId(),
-                        cantidad,
-                        productoSeleccionado.getPrecio(),
-                        subtotalSeleccionado
-                ));
-                tablaDetPedido.getItems().clear();
-                DetallePedido.llenarInformacionDetPedido(conn, listaDetPedidos);
+                // Refrescar la tabla de detalles solo con los detalles de este pedido
+                listaDetPedidos.clear();
+                DetallePedido.llenarInformacionDetPedidoPorPedido(conn, listaDetPedidos, pedidoSeleccionado.getIdPedido());
                 tablaDetPedido.refresh();
-                PedidoController.getInstancia().actualizarTotalPedidoUI(ultimoPedido.getIdPedido());
-            }
 
+                // Actualizar el total en la UI del pedido
+                PedidoController.getInstancia().actualizarTotalPedidoUI(pedidoSeleccionado.getIdPedido());
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    // Eliminar cliente
+
+    // MÉTODO ELIMINAR
     @FXML
     public void eliminarDetalle() throws SQLException {
         DetallePedido detallePedidoSelected = tablaDetPedido.getSelectionModel().getSelectedItem();
@@ -232,25 +210,92 @@ public class DetPedidoController {
         String sql = "DELETE FROM detalle_pedidos WHERE id_detalle_pedido = ?";
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, idDetPed);
-
             int filasAfectadas = stmt.executeUpdate();
             if (filasAfectadas > 0) {
-                System.out.println("Cliente eliminado correctamente.");
+                System.out.println("Detalle eliminado correctamente.");
                 listaDetPedidos.remove(detallePedidoSelected);
                 tablaDetPedido.refresh();
+                PedidoController.getInstancia().actualizarTotalPedidoUI(detallePedidoSelected.getIdPedido());
             }
             tablaDetPedido.refresh();
             PedidoController.getInstancia().actualizarTotalPedidoUI(idDetPed);
-
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-
-
     public void setListaDetalles(ObservableList<DetallePedido> listaDetalles) {
         this.listaDetPedidos = listaDetalles;
         tablaDetPedido.setItems(listaDetalles);
+    }
+
+    // MÉTODO UPDATE
+    @FXML
+    public void updateDetalle() throws SQLException {
+        DetallePedido detallePedidoSeleccionado = tablaDetPedido.getSelectionModel().getSelectedItem();
+        if (detallePedidoSeleccionado == null) {
+            System.out.println("Por favor, selecciona un detalle para actualizar.");
+            return;
+        }
+
+        Producto productoSeleccionado = (Producto) choiceBoxProducto.getValue();
+        if (productoSeleccionado == null) {
+            System.out.println("Debe seleccionar un producto.");
+            return;
+        }
+
+        int cantidad = (Integer) spinnerCantidad.getValue();
+        double precioProducto = productoSeleccionado.getPrecio();
+        double subtotalSeleccionado = cantidad * precioProducto;
+
+        String sql = "UPDATE detalle_pedidos SET cantidad = ?, precio = ?, subtotal = ? WHERE id_detalle_pedido = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, cantidad);
+            stmt.setDouble(2, precioProducto);
+            stmt.setDouble(3, subtotalSeleccionado);
+            stmt.setInt(4, detallePedidoSeleccionado.getIdDetallePedido());
+
+            int filasAfectadas = stmt.executeUpdate();
+            if (filasAfectadas > 0) {
+                System.out.println("Detalle de pedido actualizado correctamente.");
+                // Actualizar el total del pedido en la base de datos
+                actualizarTotalPedido(detallePedidoSeleccionado.getIdPedido());
+
+                // Volver a cargar la lista de detalles solo para el pedido seleccionado
+                Pedido pedidoActual = PedidoController.getInstancia().getPedidoSeleccionado();
+                if (pedidoActual != null) {
+                    // Limpiar la lista de detalles y recargarla
+                    listaDetPedidos.clear();
+                    DetallePedido.llenarInformacionDetPedidoPorPedido(conn, listaDetPedidos, pedidoActual.getIdPedido());
+                    tablaDetPedido.setItems(listaDetPedidos); // Asignar la lista de detalles actualizada al TableView
+                }
+
+                // Refrescar la tabla
+                tablaDetPedido.refresh();
+
+                // Actualizar el total en la UI del pedido
+                PedidoController.getInstancia().actualizarTotalPedidoUI(detallePedidoSeleccionado.getIdPedido());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Cerrar la conexión cuando la aplicación termine
+    public void cerrarConexion() {
+        try {
+            if (conn != null && !conn.isClosed()) {
+                conn.close();
+                System.out.println("Conexión cerrada correctamente.");
+            }
+        } catch (SQLException e)            {
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    private void cerrarVenta(){
+        Stage stage = (Stage) tablaDetPedido.getScene().getWindow();
+        stage.close();
     }
 }

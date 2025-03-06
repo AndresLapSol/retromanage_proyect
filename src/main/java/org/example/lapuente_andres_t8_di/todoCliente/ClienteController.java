@@ -6,11 +6,19 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.view.JasperViewer;
 import org.example.lapuente_andres_t8_di.ConexionMySQL;
 
+import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class ClienteController {
 
@@ -162,6 +170,42 @@ public class ClienteController {
             e.printStackTrace();
         }
     }
+
+    public void makeReportCliente() {
+        try {
+            // Cargar el informe desde los recursos
+            InputStream reportStream = getClass().getResourceAsStream("/reports/clientes_report.jrxml");
+            if (reportStream == null) {
+                throw new JRException("No se encontró el archivo del informe en los recursos.");
+            }
+            JasperReport reporte = JasperCompileManager.compileReport(reportStream);
+
+            // Conectar con la base de datos
+            Connection conexion = new ConexionMySQL().getConnection();
+            if (conexion == null) {
+                throw new SQLException("No se pudo establecer la conexión con la base de datos.");
+            }
+
+            // Crear un mapa de parámetros y pasar la conexión
+            Map<String, Object> parametros = new HashMap<>();
+            parametros.put("REPORT_CONNECTION", conexion);
+
+            // Llenar el informe con los datos
+            JasperPrint jasperPrint = JasperFillManager.fillReport(reporte, parametros, new JREmptyDataSource());
+
+            // Mostrar el informe
+            JasperViewer jasperView = new JasperViewer(jasperPrint, false);
+            jasperView.setVisible(true);
+
+            // Exportar a PDF
+            JasperExportManager.exportReportToPdfFile(jasperPrint, "clientes_report.pdf");
+
+        } catch (JRException | SQLException e) {
+            e.printStackTrace(); // Imprimir error para depuración
+            throw new RuntimeException("Error al generar el informe: " + e.getMessage(), e);
+        }
+    }
+
 
     // Cerrar la conexión cuando la aplicación termine
     public void cerrarConexion() {

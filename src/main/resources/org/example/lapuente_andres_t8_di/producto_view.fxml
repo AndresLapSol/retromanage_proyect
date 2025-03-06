@@ -27,9 +27,9 @@
       <Label fx:id="labelTelefono" layoutX="227.0" layoutY="50.0" text="Categoria:" underline="true" />
       <TextField fx:id="textFieldPrecio" layoutX="500.0" layoutY="46.0" />
       <Label fx:id="labelDireccion" layoutX="452.0" layoutY="50.0" text="Precio:" underline="true" />
-      <Button fx:id="buttonCrear" onAction="#insertarProducto" layoutX="585.0" layoutY="158.0" mnemonicParsing="false" text="Crear" />
-      <Button fx:id="buttonModificar" onAction="#actualizarProducto" layoutX="574.0" layoutY="231.0" mnemonicParsing="false" text="Modificar" />
-      <Button fx:id="buttonEliminar" onAction="#eliminarProducto" layoutX="583.0" layoutY="307.0" mnemonicParsing="false" text="Elimar" />
+      <Button fx:id="buttonCrear" layoutX="585.0" layoutY="158.0" mnemonicParsing="false" onAction="#insertarProducto" text="Crear" />
+      <Button fx:id="buttonModificar" layoutX="574.0" layoutY="231.0" mnemonicParsing="false" onAction="#actualizarProducto" text="Modificar" />
+      <Button fx:id="buttonEliminar" layoutX="583.0" layoutY="307.0" mnemonicParsing="false" onAction="#eliminarProducto" text="Elimar" />
       <MenuBar prefHeight="25.0" prefWidth="679.0">
         <menus>
             <Menu>
@@ -41,5 +41,6 @@
       </MenuBar>
       <ChoiceBox fx:id="choiceBoxCategoria" layoutX="285.0" layoutY="46.0" prefWidth="150.0" />
       <CheckBox fx:id="checkBoxDisponibilidad" layoutX="22.0" layoutY="97.0" mnemonicParsing="false" prefHeight="17.0" prefWidth="106.0" text="Disponibilidad" underline="true" />
+      <Button fx:id="buttonReport" onAction="#makeReportProducto"  layoutX="494.0" layoutY="231.0" mnemonicParsing="false"  text="Report" />
    </children>
 </AnchorPane>

@@ -25,17 +25,18 @@
       <Label fx:id="labelTelefono" layoutX="227.0" layoutY="50.0" text="Telefono:" underline="true" />
       <TextField fx:id="textFieldDireccion" layoutX="505.0" layoutY="46.0" />
       <Label fx:id="labelDireccion" layoutX="452.0" layoutY="50.0" text="Direccion:" underline="true" />
-      <Button fx:id="buttonCrear" layoutX="177.0" layoutY="337.0" mnemonicParsing="false" onAction="#insertarCliente" text="Crear" />
-      <Button fx:id="buttonModificar" layoutX="310.0" layoutY="337.0" mnemonicParsing="false" onAction="#actualizarCliente" text="Modificar" />
-      <Button fx:id="buttonEliminar" layoutX="453.0" layoutY="337.0" mnemonicParsing="false" onAction="#eliminarCliente" text="Elimar" />
+      <Button fx:id="buttonCrear" layoutX="203.0" layoutY="337.0" mnemonicParsing="false" onAction="#insertarCliente" text="Crear" />
+      <Button fx:id="buttonModificar" layoutX="276.0" layoutY="337.0" mnemonicParsing="false" onAction="#actualizarCliente" text="Modificar" />
+      <Button fx:id="buttonEliminar" layoutX="368.0" layoutY="337.0" mnemonicParsing="false" onAction="#eliminarCliente" text="Elimar" />
       <MenuBar prefHeight="25.0" prefWidth="679.0">
         <menus>
             <Menu>
                 <graphic>
-                    <Label fx:id="volverMenu" text="Volver" onMouseClicked="#cerrarVenta"/>
+                    <Label fx:id="volverMenu" onMouseClicked="#cerrarVenta" text="Volver" />
                 </graphic>
             </Menu>
         </menus>
       </MenuBar>
+      <Button fx:id="buttonReport" onAction="#makeReportCliente" layoutX="439.0" layoutY="337.0" mnemonicParsing="false" text="Report" />
    </children>
 </AnchorPane>

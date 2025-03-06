@@ -4,6 +4,7 @@ module org.example.lapuente_andres_t8_di {
     requires java.naming;
     requires java.sql;
     requires mysql.connector.j;
+    requires jasperreports;
 
     opens org.example.lapuente_andres_t8_di to javafx.fxml;
     exports org.example.lapuente_andres_t8_di;
